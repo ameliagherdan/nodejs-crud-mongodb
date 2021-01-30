@@ -15,7 +15,7 @@ router.post('/',(req,res)=>{
 
 function insertRecord(req,res){
     var employee = new Employee();
-    employee.fullname = req.body.fullName;
+    employee.fullName = req.body.fullName;
     employee.email=req.body.email;
     employee.mobile=req.body.mobile;
     employee.city=req.body.city;
@@ -37,21 +37,30 @@ function insertRecord(req,res){
     });
 }
 
-router.get('/list', (req,res)=>{
-    res.json('from list');
-})
+router.get('/list', (req, res) => {
+    Employee.find((err, docs) => {
+        if (!err) {
+            res.render("employee/list", {
+                list: docs
+            });
+        }
+        else {
+            console.log('Error in retrieving employee list :' + err);
+        }
+    });
+});
 
-function handleValidationError(err,body){
-    for(field in err.errors)
-    {
-        switch(err.errors[field].path){
+function handleValidationError(err, body) {
+    for (field in err.errors) {
+        switch (err.errors[field].path) {
             case 'fullName':
-                body['fullNameError']= err.errors[field].message;
+                body['fullNameError'] = err.errors[field].message;
                 break;
             case 'email':
                 body['emailError'] = err.errors[field].message;
                 break;
-             default: break;     
+            default:
+                break;
         }
     }
 }
